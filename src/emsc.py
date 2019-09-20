@@ -1,13 +1,18 @@
+from typing import Union as U, Tuple as T
+
 import numpy as np
 
 
-def emsc(spectra, wavenumbers, reference=None, order=2,
-         constituents=None, return_coefs=False):
+def emsc(spectra: np.ndarray, wavenumbers: np.ndarray, order: int = 2,
+         reference: np.ndarray = None,
+         constituents: np.ndarray = None,
+         return_coefs: bool = False) -> U[np.ndarray, T[np.ndarray, np.ndarray]]:
     """
     Preprocess all spectra with EMSC
     :param spectra: ndarray of shape [n_samples, n_channels]
     :param wavenumbers: ndarray of shape [n_channels]
     :param order: order of polynomial
+    :param reference: reference spectrum
     :param constituents: ndarray of shape [n_consituents, n_channels]
     Except constituents it can also take orthogonal vectors,
     for example from PCA.
