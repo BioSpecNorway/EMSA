@@ -27,10 +27,14 @@ class PLSDADummy(BaseEstimator):
 
         :param X:
         :param Y: list of labels
+        :return : 
         """
         self.classes = np.array(sorted(np.unique(Y)))
+
         Y = self.__one_hot_encode(Y)
         self.pls.fit(X, Y)
+
+        return self
 
     def predict(self, X):
         y_pred = np.argmax(self.pls.predict(X), axis=1)
