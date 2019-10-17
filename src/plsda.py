@@ -1,7 +1,7 @@
+import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.preprocessing import OneHotEncoder
-import numpy as np
 
 
 class PLSDADummy(BaseEstimator):
@@ -27,7 +27,7 @@ class PLSDADummy(BaseEstimator):
 
         :param X:
         :param Y: list of labels
-        :return : 
+        :return :
         """
         self.classes = np.array(sorted(np.unique(Y)))
 
