@@ -10,22 +10,30 @@ from src.emsc import emsc
 PROJECT_DIR = os.path.dirname(__file__) + '/..'
 
 
-def augment_one_spectrum(spectrum, wavenumbers, label, emsa):
-    generator = emsa.generator(
-        [spectrum], [label],  # need to be passed array of spectra
-        batch_size=5)
-
-    n_times = 3
+def plot_from_generator(generator, wavenumbers, n_times=3,
+                        spectrum=None, title=None, override_label=None):
     for i, batch in enumerate(generator):
         if i >= n_times:
             break
-        plt.title('Augmented spectra from one spectrum')
-        plt.plot(wavenumbers, spectrum, label='original')
+        if title is not None:
+            plt.title(title)
+        if spectrum is not None:
+            plt.plot(wavenumbers, spectrum, label='original', linestyle='--')
         for augmented_spectrum, label in zip(*batch):
-            plt.plot(wavenumbers, augmented_spectrum, label='augmented')
+            if override_label is not None:
+                label = override_label
+            plt.plot(wavenumbers, augmented_spectrum, label=label)
         plt.gca().invert_xaxis()
         plt.legend()
         plt.show()
+
+
+def augment_one_spectrum(spectrum, wavenumbers, label, emsa):
+    generator = emsa.generator([spectrum], [label], batch_size=5)
+
+    plot_from_generator(generator, wavenumbers,
+                        title='Augmented spectra from one spectrum',
+                        override_label='augmented')
 
 
 def augment_dataset(spectra, wavenumbers, labels, emsa):
@@ -35,16 +43,8 @@ def augment_dataset(spectra, wavenumbers, labels, emsa):
         batch_size=6
     )
 
-    n_times = 3
-    for i, batch in enumerate(generator):
-        if i >= n_times:
-            break
-        plt.title('Augmented spectra from dataset')
-        for augmented_spectrum, label in zip(*batch):
-            plt.plot(wavenumbers, augmented_spectrum, label=label)
-        plt.gca().invert_xaxis()
-        plt.legend()
-        plt.show()
+    plot_from_generator(
+        generator, wavenumbers, title='Augmented spectra from dataset')
 
 
 def main(spectra: np.ndarray, wavenumbers: np.ndarray, labels: np.ndarray):
@@ -57,11 +57,13 @@ def main(spectra: np.ndarray, wavenumbers: np.ndarray, labels: np.ndarray):
 
     emsa = EMSA(coefs_std, wavenumbers, reference, order=2)
 
+    # (1) Augment one spectrum
     spectrum_idx = 0
     augment_one_spectrum(
         spectra[spectrum_idx], wavenumbers,
         labels[spectrum_idx], emsa)
 
+    # (2) Augment whole dataset
     augment_dataset(spectra, wavenumbers, labels, emsa)
 
 
