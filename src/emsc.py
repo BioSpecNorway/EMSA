@@ -28,7 +28,13 @@ def emsc(spectra: np.ndarray, wavenumbers: np.ndarray, order: int = 2,
         reference = np.mean(spectra, axis=0)
     reference = reference[:, np.newaxis]
 
-    half_rng = np.abs(wavenumbers[0] - wavenumbers[-1]) / 2
+    # squeeze wavenumbers to approx. range [-1; 1]
+    # use if else to support uint types
+    if wavenumbers[0] > wavenumbers[-1]:
+        rng = wavenumbers[0] - wavenumbers[-1]
+    else:
+        rng = wavenumbers[-1] - wavenumbers[0]
+    half_rng = rng / 2
     normalized_wns = (wavenumbers - np.mean(wavenumbers)) / half_rng
 
     polynomial_columns = [np.ones(len(wavenumbers))]
